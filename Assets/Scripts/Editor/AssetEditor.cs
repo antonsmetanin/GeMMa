@@ -8,37 +8,56 @@ using System.Text;
 
 public class AssetEditor : MonoBehaviour
 {
+	static char[] separators = new char[] { '\\', '/' };
+	
+	
 	static void CreateFolder(string path)
 	{
-		string[] directoryNames = path.Split(new char[] { '/' });
+		string[] directoryNames = path.Split(separators);
 		
-		for (int i = 0, count = directoryNames.Length - 1; i < count; ++i) {
-			StringBuilder stringBuilder = new StringBuilder();
-			
-			for (int j = 0; j < i + 1; ++j) {
-				stringBuilder.Append(directoryNames[j]);
+		CreateFolderRecursive(directoryNames, 0);
+	}
+	
+	
+	static void CreateFolderRecursive(string[] directoryNames, int index)
+	{
+		if (directoryNames.Length == index) {
+			return;
+		}
+		
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		if (index > 0) {
+			for (int i = 0; i < index; ++i) {
+				stringBuilder.Append(directoryNames[i]);
 				
-				if (j < i) {
+				if (i < index - 1) {
 					stringBuilder.Append("/");
 				}
 			}
-					
-			string currentFolderName = stringBuilder.ToString();
-			string nextFolderName = directoryNames[i + 1];
-			
-			if (!Directory.Exists(currentFolderName)) {
-				Debug.Log("Creating folder " + nextFolderName + " at " + currentFolderName);
-				AssetDatabase.CreateFolder(currentFolderName, nextFolderName);
-			} else {
-				Debug.Log("" + currentFolderName + " already exists");
-			}
 		}
+		
+		string parentDirectory = stringBuilder.ToString();
+		string currentDirectory = directoryNames[index];
+		
+		if (!Directory.Exists(parentDirectory + "/" + currentDirectory)) {
+			Debug.Log("Creating folder " + currentDirectory + " at " + parentDirectory);
+			AssetDatabase.CreateFolder(parentDirectory, currentDirectory);
+		} else {
+			Debug.Log("" + currentDirectory + " already exists");
+		}
+		
+		CreateFolderRecursive(directoryNames, index + 1);
 	}
 	
-	static void CreateAsset<T>(string path) where T : ScriptableObject, new()
+	
+	
+	static void CreateAssetAtFolder<T>(string folder, string assetName) where T : ScriptableObject, new()
 	{
+		CreateFolder(folder);
+		
 		T asset = ScriptableObject.CreateInstance(typeof(T)) as T;
-        AssetDatabase.CreateAsset(asset, path);
+        AssetDatabase.CreateAsset(asset, folder + "/" + assetName);
         AssetDatabase.SaveAssets();
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = asset;
@@ -48,15 +67,13 @@ public class AssetEditor : MonoBehaviour
 	[MenuItem("Assets/Create/Action Card")]
     public static void CreateActionCard()
     {
-		CreateFolder("Assets/1/2/3/4/5/6");
-		
-//		CreateAsset<ActionCardData>("Assets/Data/Action Cards/Action Card.asset");
+		CreateAssetAtFolder<ActionCardData>("Assets/Data/Action Cards", "Action Card.asset");
     }
 	
 	
 	[MenuItem("Assets/Create/Character")]
     public static void CreateCharacterCard()
     {
-//		CreateAsset<CharacterData>("Assets/Data/Characters/Character.asset");
+		CreateAssetAtFolder<CharacterData>("Assets/Data/Characters", "Character.asset");
     }
 }
