@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
+using Model;
 
 
 public class AssetEditor : MonoBehaviour
@@ -68,6 +69,13 @@ public class AssetEditor : MonoBehaviour
     public static void CreateActionCard()
     {
 		CreateAssetAtFolder<ActionCardData>("Assets/Data/Action Cards", "Action Card.asset");
+    }
+	
+	
+	[MenuItem("Assets/Create/Result Card")]
+    public static void CreateResultCard()
+    {
+		CreateAssetAtFolder<ResultCardData>("Assets/Data/Result Cards", "Result Card.asset");
     }
 	
 	

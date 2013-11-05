@@ -58,10 +58,10 @@ namespace Model {
 	
 	
 	[System.Serializable]
-	public class Position
+	public struct Position
 	{
-		int x;
-		int y;
+		public int x;
+		public int y;
 	}
 	
 	
@@ -70,27 +70,6 @@ namespace Model {
 	{
 		public ParameterType parameter;
 		public int costValue;
-	}
-	
-	
-	[System.Serializable]
-	public class ActionCard
-	{
-		public string cardName;
-		public bool isPositive;
-		public List<Cost> costs;
-		public List<ParameterType> requiredParameters;
-		public TargetMode targetMode;
-		public SkillType skillType;
-		public SkillSubtype skillSubtype;
-		public int[] damageValues = new int[Character.parametersLength];
-	}
-	
-	
-	[System.Serializable]
-	public class ResultCard
-	{
-		public ResultType type;
 	}
 	
 	
@@ -105,29 +84,43 @@ namespace Model {
 	}
 	
 	
-	public class TimeController
-	{
-		public static long CurrentTime {
-			get {
-				return System.DateTime.Now.Ticks;
-			}
-		}
-	}
+	
 	
 	
 	[System.Serializable]
 	public class ATBGauge
 	{
-		public float atbValue;
+		public float ATBValue {
+			get {
+				return (float)(TimeController.CurrentTime - startTime) / (float)(endTime - startTime);
+			}
+		}
+		
+		public Action fullEvent;
+		
 		public long startTime;
 		public long endTime;
+		public float speed;
+		bool full;
 		
-		public float speed = 0.1f;
 		
 		public void Clear()
 		{
 			startTime = TimeController.CurrentTime;
-			endTime = startTime + (int)(1.0f / speed);
+			endTime = startTime + (int)(10000.0f * 1000.0f / speed);
+			
+			full = false;
+		}
+		
+		public void Update()
+		{
+			if (!full && TimeController.CurrentTime >= endTime) {
+				if (fullEvent != null) {
+					fullEvent();
+				}
+				
+				full = true;
+			}
 		}
 	}
 	
@@ -135,46 +128,60 @@ namespace Model {
 	[System.Serializable]
 	public class Character
 	{
+		CharacterData staticData;
+		
 		public static int parametersLength = Enum.GetNames(typeof(ParameterType)).Length;
 		
-		public string characterName;
+		public int[] currentParameters = new int[parametersLength];
 		
-		public int[] parameters = new int[parametersLength];
+		public List<ActionCardData> actionDeck = new List<ActionCardData>();
+		public List<ResultCardData> actionResultDeck = new List<ResultCardData>();
 		
-		public List<ActionCard> possibleActionCards;
-		public List<ResultCard> possibleResultCards;
-		
-		public List<ActionCard> actionDeck;
-		public List<ResultCard> actionResultDeck;
-		
-		public Position position;
-		public ATBGauge atbGauge;
+		public Position position = new Position();
+		public ATBGauge atbGauge = new ATBGauge();
 		
 		public bool dead;
 		
-		
 		public Action<Character> atbGaugeFullEvent;
-		public Action<Character, ActionCard> actionCardPulledEvent;
-		public Action<Character, ResultCard> actionResultCardPulledEvent;
+		public Action<Character, ActionCardData> actionCardPulledEvent;
+		public Action<Character, ResultCardData> actionResultCardPulledEvent;
 		public Action<Character, Character> targetSelectedEvent;
 		
-		
-		public ActionCard pendingActionCard;
-		public ResultCard pendingResultCard;
+		public ActionCardData pendingActionCard;
+		public ResultCardData pendingResultCard;
 		public Character selectedTarget;
+		
+		
+		public void Init(CharacterData staticData)
+		{
+			this.staticData = staticData;
+			
+			atbGauge.speed = staticData.atbSpeed;
+			atbGauge.fullEvent += OnATBGaugeFull;
+		}
+		
+		
+		void OnATBGaugeFull()
+		{
+			if (atbGaugeFullEvent != null) {
+				atbGaugeFullEvent(this);
+			}
+		}
 		
 		
 		public void SetupNewBattle()
 		{
 			actionDeck.Clear();
 			
-			foreach (ActionCard card in possibleActionCards) {
+			foreach (ActionCardData card in staticData.possibleActionCards) {
 				actionDeck.Add(card);
 			}
 			
-			foreach (ResultCard card in possibleResultCards) {
+			foreach (ResultCardData card in staticData.possibleResultCards) {
 				actionResultDeck.Add(card);
 			}
+			
+			atbGauge.Clear();
 		}
 		
 		
@@ -234,17 +241,17 @@ namespace Model {
 		{
 			for (int i = 0; i < Character.parametersLength; ++i) {
 				if (pendingActionCard.isPositive) {
-					target.parameters[i] += pendingActionCard.damageValues[i];
+					target.currentParameters[i] += pendingActionCard.damageValues[i];
 				} else {
-					target.parameters[i] -= pendingActionCard.damageValues[i];
+					target.currentParameters[i] -= pendingActionCard.damageValues[i];
 				}
 				
-				if (target.parameters[i] <= 0) {
-					target.parameters[i] = 0;
+				if (target.currentParameters[i] <= 0) {
+					target.currentParameters[i] = 0;
 				}
 			}
 			
-			if (target.parameters[(int)ParameterType.HealthPoints] == 0) {
+			if (target.currentParameters[(int)ParameterType.HealthPoints] == 0) {
 				target.dead = true;
 			}
 		}
@@ -252,13 +259,9 @@ namespace Model {
 		
 		public void Update()
 		{
-			long currentTime = TimeController.CurrentTime;
+			atbGauge.Update();
 			
-			if (currentTime >= atbGauge.endTime) {
-				if (atbGaugeFullEvent != null) {
-					atbGaugeFullEvent(this);
-				}
-			}
+			
 		}
 	}
 

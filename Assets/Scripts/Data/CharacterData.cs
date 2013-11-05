@@ -1,9 +1,18 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-
-public class CharacterData : ScriptableObject
+namespace Model
 {
-	public Model.Character character;
+	public class CharacterData : ScriptableObject
+	{
+		public string characterName;
+		
+		public int[] defaultParameters = new int[Model.Character.parametersLength];
+		public int[] maxParameters = new int[Model.Character.parametersLength];
+		
+		public float atbSpeed;
+		
+		public List<ActionCardData> possibleActionCards;
+		public List<ResultCardData> possibleResultCards;
+	}
 }
-
