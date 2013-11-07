@@ -7,6 +7,7 @@ using Model;
 public class ActionCardView : MonoBehaviour
 {
 	public Action<ActionCardView> openEvent;
+	public Action<ActionCardView> centeredEvent;
 	
 	public ActionCardData actionCard;
 	
@@ -19,8 +20,8 @@ public class ActionCardView : MonoBehaviour
 //		
 //	}
 	
-	long rotationStartTime;
-	long rotationEndTime;
+	long actionStartTime;
+	long actionEndTime;
 	long rotationTime = 10000 * 300;
 	float currentAngle;
 	
@@ -61,18 +62,18 @@ public class ActionCardView : MonoBehaviour
 		if (clickable && !opening && !open) {
 			opening = true;
 			
-			rotationStartTime = TimeController.CurrentTime;
-			rotationEndTime = rotationStartTime + rotationTime;
+			actionStartTime = TimeController.CurrentTime;
+			actionEndTime = actionStartTime + rotationTime;
 		}
 	}
 	
 	
 	public void MoveToTheCenter()
 	{
-		bool moving = true;
+		moving = true;
 		
-		rotationStartTime = TimeController.CurrentTime;
-		rotationEndTime = rotationStartTime + rotationTime * 10;
+		actionStartTime = TimeController.CurrentTime;
+		actionEndTime = actionStartTime + rotationTime * 3;
 		
 		startPosition = transform.localPosition;
 	}
@@ -83,8 +84,8 @@ public class ActionCardView : MonoBehaviour
 		long currentTime = TimeController.CurrentTime;
 		
 		if (opening) {
-			if (currentTime < rotationEndTime) {
-				float t = (float)(currentTime - rotationStartTime) / (float)rotationTime;
+			if (currentTime < actionEndTime) {
+				float t = (float)(currentTime - actionStartTime) / (float)rotationTime;
 				
 				currentAngle = t * 180.0f;
 			} else {
@@ -98,12 +99,16 @@ public class ActionCardView : MonoBehaviour
 		}
 		
 		if (moving) {
-			if (currentTime < rotationEndTime) {
-				float t = (float)(currentTime - rotationStartTime) / (float)rotationTime;
+			if (currentTime < actionEndTime) {
+				float t = (float)(currentTime - actionStartTime) / (float)(actionEndTime - actionStartTime);
 				
 				transform.localPosition = startPosition * (1.0f - t) + new Vector3((float)(Screen.width / 2), (float)(Screen.height / 2), 0.0f) * t;
 			} else {
 				moving = false;
+				
+				if (centeredEvent != null) {
+					centeredEvent(this);
+				}
 			}
 		}
 		

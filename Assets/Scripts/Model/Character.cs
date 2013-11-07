@@ -84,6 +84,45 @@ namespace Model {
 	}
 	
 	
+//	public class TimedValue<T>
+//	{
+//		bool finished;
+//		Action<TimedValue<T>> finishedEvent;
+//		
+//		long startTime;
+//		long endTime;
+//		
+//		T startValue;
+//		T endValue;
+//		
+//		public void SetTo(T val)
+//		{
+//			startValue = endValue = val;
+//		}
+//		
+//		
+//		public T Value
+//		{
+//			get { 
+//				float t = (TimeController.CurrentTime - startTime) / (endTime - startTime);
+//				return startValue * (1.0f - t) + endValue * t;
+//			}
+//		}
+//		
+//		
+//		public void Update()
+//		{
+//			if (!finished && TimeController.CurrentTime >= endTime) {
+//				finished = true;
+//				
+//				if (finishedEvent != null) {
+//					finishedEvent(this);
+//				}
+//			}
+//		}
+//	}
+	
+	
 	
 	
 	
@@ -128,7 +167,7 @@ namespace Model {
 	[System.Serializable]
 	public class Character
 	{
-		CharacterData staticData;
+		public CharacterData staticData;
 		
 		public static int parametersLength = Enum.GetNames(typeof(ParameterType)).Length;
 		
@@ -158,6 +197,10 @@ namespace Model {
 			
 			atbGauge.speed = staticData.atbSpeed;
 			atbGauge.fullEvent += OnATBGaugeFull;
+			
+			for (int i = 0; i < parametersLength; ++i) {
+				currentParameters[i] = staticData.defaultParameters[i];
+			}
 		}
 		
 		

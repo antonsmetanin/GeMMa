@@ -14,6 +14,8 @@ public class UnityGameController : MonoBehaviour
 	
 	public static GameController GameController { get { return Instance.gameController; } }
 	
+	bool initialized;
+	
 	
 	public static UnityGameController Instance {
 		get {
@@ -27,23 +29,27 @@ public class UnityGameController : MonoBehaviour
 	}
 	
 	
-	void Start()
+	void Update()
 	{
-		List<Character> allyModels = new List<Character>();
-		List<Character> enemyModels = new List<Character>();
-		
-		foreach (CharacterData data in allies) {
-			Character character = new Character();
-			character.Init(data);
-			allyModels.Add(character);
+		if (!initialized && Input.GetKey(KeyCode.Space)) {
+			List<Character> allyModels = new List<Character>();
+			List<Character> enemyModels = new List<Character>();
+			
+			foreach (CharacterData data in allies) {
+				Character character = new Character();
+				character.Init(data);
+				allyModels.Add(character);
+			}
+			
+			foreach (CharacterData data in enemies) {
+				Character character = new Character();
+				character.Init(data);
+				enemyModels.Add(character);
+			}
+			
+			gameController.SetupBattle(allyModels, enemyModels);
+			
+			initialized = true;
 		}
-		
-		foreach (CharacterData data in enemies) {
-			Character character = new Character();
-			character.Init(data);
-			enemyModels.Add(character);
-		}
-		
-		gameController.SetupBattle(allyModels, enemyModels);
 	}
 }

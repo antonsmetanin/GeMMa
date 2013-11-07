@@ -42,12 +42,16 @@ namespace Model
 		
 		public override void Update()
 		{
-			foreach (Character character in allies) {
-				character.Update();
+			if (allies != null) {
+				foreach (Character character in allies) {
+					character.Update();
+				}
 			}
-				
-			foreach (Character character in enemies) {
-				character.Update();
+			
+			if (enemies != null) {
+				foreach (Character character in enemies) {
+					character.Update();
+				}
 			}
 		}
 	}
