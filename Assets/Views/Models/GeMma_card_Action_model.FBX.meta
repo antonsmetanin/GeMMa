@@ -4,10 +4,44 @@ ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Cylinder001
+    100004: Object002
+    100006: Object003
+    100008: Plane001
+    100010: Plane002
+    100012: Plane003
+    100014: Plane004
     400000: //RootNode
+    400002: Cylinder001
+    400004: Object002
+    400006: Object003
+    400008: Plane001
+    400010: Plane002
+    400012: Plane003
+    400014: Plane004
     2300000: //RootNode
+    2300002: Cylinder001
+    2300004: Object002
+    2300006: Object003
+    2300008: Plane001
+    2300010: Plane002
+    2300012: Plane003
+    2300014: Plane004
     3300000: //RootNode
+    3300002: Cylinder001
+    3300004: Object002
+    3300006: Object003
+    3300008: Plane001
+    3300010: Plane002
+    3300012: Plane003
+    3300014: Plane004
     4300000: Plane001
+    4300002: Plane002
+    4300004: Object002
+    4300006: Object003
+    4300008: Cylinder001
+    4300010: Plane003
+    4300012: Plane004
     9500000: //RootNode
   materials:
     importMaterials: 0
