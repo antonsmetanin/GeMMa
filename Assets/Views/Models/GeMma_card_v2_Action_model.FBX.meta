@@ -1,0 +1,90 @@
+fileFormatVersion: 2
+guid: 6638d01a3ab43ca4484656b548c2ad81
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Action_icon
+    100002: Action_type_icon
+    100004: Card_icon
+    100006: Card_icon002
+    100008: //RootNode
+    100010: Status_eff_icon
+    100012: Status_eff_negate_icon
+    400000: Action_icon
+    400002: Action_type_icon
+    400004: Card_icon
+    400006: Card_icon002
+    400008: //RootNode
+    400010: Status_eff_icon
+    400012: Status_eff_negate_icon
+    2300000: Action_icon
+    2300002: Action_type_icon
+    2300004: Card_icon
+    2300006: Card_icon002
+    2300008: Status_eff_icon
+    2300010: Status_eff_negate_icon
+    3300000: Action_icon
+    3300002: Action_type_icon
+    3300004: Card_icon
+    3300006: Card_icon002
+    3300008: Status_eff_icon
+    3300010: Status_eff_negate_icon
+    4300000: Card_icon
+    4300002: Action_icon
+    4300004: Card_icon002
+    4300006: Status_eff_negate_icon
+    4300008: Status_eff_icon
+    4300010: Action_type_icon
+    9500000: //RootNode
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 0
+  userData: 
