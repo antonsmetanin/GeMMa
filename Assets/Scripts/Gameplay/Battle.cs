@@ -17,6 +17,8 @@ namespace Model
 		
 		public List<Character> allies;
 		public List<Character> enemies;
+		
+		public List<Character> readyCharacters = new List<Character>();
 
 		
 		public void SetupBattle(List<Character> allies, List<Character> enemies)
@@ -27,6 +29,8 @@ namespace Model
 			for (int i = 0; i < allies.Count; ++i) {
 				allies[i].position.x = -5;
 				allies[i].SetupNewBattle();
+				allies[i].atbGaugeFullEvent += OnATBGAugeFull;
+				
 			}
 			
 			for (int i = 0; i < enemies.Count; ++i) {
@@ -53,6 +57,19 @@ namespace Model
 					character.Update();
 				}
 			}
+		}
+		
+		
+		void OnATBGAugeFull(Character character)
+		{
+			readyCharacters.Add(character);
+		}
+		
+		
+		public void CharacterMoveFinished(Character character)
+		{
+			readyCharacters.Remove(character);
+			character.atbGauge.Clear();
 		}
 	}
 }

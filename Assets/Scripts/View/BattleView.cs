@@ -39,10 +39,10 @@ public class BattleView : MonoBehaviour
 	void ATBGaugeFull(Character character)
 	{
 		if (battle.allies.Contains(character)) {
-			float cardWidth = 120.0f;
+			float cardWidth = 250.0f;
 			float x = (float)(Screen.width / 2) - (cardWidth * (float)character.actionDeck.Count) * 0.5f;
 			
-			foreach (ActionCardData actionCard in character.actionDeck) {
+			foreach (ActionCard actionCard in character.actionDeck) {
 				ActionCardView actionCardView = GameObject.Instantiate(cardSource) as ActionCardView;
 				actionCardView.Init(actionCard);
 				actionCardView.transform.parent = cardsContainer;
@@ -70,6 +70,8 @@ public class BattleView : MonoBehaviour
 	
 	void OnActionCardCentered(ActionCardView actionCard)
 	{
-		
+		actionCard.actionCard.owner.PullResultCard();
+		actionCard.actionCard.owner.SelectTarget(battle.enemies[0]);
+		actionCard.actionCard.owner.ConfirmMove();
 	}
 }

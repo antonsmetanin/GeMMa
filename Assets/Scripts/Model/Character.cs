@@ -173,7 +173,7 @@ namespace Model {
 		
 		public int[] currentParameters = new int[parametersLength];
 		
-		public List<ActionCardData> actionDeck = new List<ActionCardData>();
+		public List<ActionCard> actionDeck = new List<ActionCard>();
 		public List<ResultCardData> actionResultDeck = new List<ResultCardData>();
 		
 		public Position position = new Position();
@@ -182,11 +182,11 @@ namespace Model {
 		public bool dead;
 		
 		public Action<Character> atbGaugeFullEvent;
-		public Action<Character, ActionCardData> actionCardPulledEvent;
+		public Action<Character, ActionCard> actionCardPulledEvent;
 		public Action<Character, ResultCardData> actionResultCardPulledEvent;
 		public Action<Character, Character> targetSelectedEvent;
 		
-		public ActionCardData pendingActionCard;
+		public ActionCard pendingActionCard;
 		public ResultCardData pendingResultCard;
 		public Character selectedTarget;
 		
@@ -216,7 +216,9 @@ namespace Model {
 		{
 			actionDeck.Clear();
 			
-			foreach (ActionCardData card in staticData.possibleActionCards) {
+			foreach (ActionCardData cardData in staticData.possibleActionCards) {
+				ActionCard card = new ActionCard();
+				card.Init(cardData, this);
 				actionDeck.Add(card);
 			}
 			
@@ -228,9 +230,19 @@ namespace Model {
 		}
 		
 		
-		public void PullActionCard()
+		public void PullRandomActionCard()
 		{
-			pendingActionCard = actionDeck[RandomController.GetRandom(0, actionDeck.Count)];
+			PullActionCard(actionDeck[RandomController.GetRandom(0, actionDeck.Count)]);
+		}
+		
+		
+		public void PullActionCard(ActionCard card)
+		{
+			if (!actionDeck.Contains(card)) {
+				UnityEngine.Debug.LogError("Hey! This is not my card!");
+			}
+			
+			pendingActionCard = card;
 			
 			if (actionCardPulledEvent != null) {
 				actionCardPulledEvent(this, pendingActionCard);
@@ -264,7 +276,9 @@ namespace Model {
 				return;
 			}
 			
-			if (pendingActionCard.targetMode == TargetMode.Single) {
+			UnityEngine.Debug.Log("Confirming move");
+			
+			if (pendingActionCard.data.targetMode == TargetMode.Single) {
 				if (selectedTarget == null) {
 					return;
 				}
@@ -274,7 +288,7 @@ namespace Model {
 				} else if (pendingResultCard.type == ResultType.OK) {
 					ApplyCardOnTarget(selectedTarget);
 				}
-			} else if (pendingActionCard.targetMode == TargetMode.Single) {
+			} else if (pendingActionCard.data.targetMode == TargetMode.Single) {
 				
 			}
 		}
@@ -282,11 +296,13 @@ namespace Model {
 		
 		public void ApplyCardOnTarget(Character target)
 		{
+			UnityEngine.Debug.Log("Applying card to target");
+			
 			for (int i = 0; i < Character.parametersLength; ++i) {
-				if (pendingActionCard.isPositive) {
-					target.currentParameters[i] += pendingActionCard.damageValues[i];
+				if (pendingActionCard.data.isPositive) {
+					target.currentParameters[i] += pendingActionCard.data.damageValues[i];
 				} else {
-					target.currentParameters[i] -= pendingActionCard.damageValues[i];
+					target.currentParameters[i] -= pendingActionCard.data.damageValues[i];
 				}
 				
 				if (target.currentParameters[i] <= 0) {

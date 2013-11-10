@@ -9,7 +9,7 @@ public class ActionCardView : MonoBehaviour
 	public Action<ActionCardView> openEvent;
 	public Action<ActionCardView> centeredEvent;
 	
-	public ActionCardData actionCard;
+	public ActionCard actionCard;
 	
 	public Renderer cardRenderer;
 	public Texture2D icon;
@@ -36,7 +36,7 @@ public class ActionCardView : MonoBehaviour
 	Vector3 startPosition;
 	
 	
-	public void Init(ActionCardData actionCard)
+	public void Init(ActionCard actionCard)
 	{
 		this.actionCard = actionCard;
 	}
@@ -59,6 +59,8 @@ public class ActionCardView : MonoBehaviour
 	
 	public void Rotate()
 	{
+		actionCard.owner.PullActionCard(actionCard);
+		
 		if (clickable && !opening && !open) {
 			opening = true;
 			

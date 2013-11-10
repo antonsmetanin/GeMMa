@@ -31,7 +31,7 @@ public class CharacterView : MonoBehaviour
 	}
 	
 	
-	void OnActionCardPulled(Character targetCharacter, ActionCardData card)
+	void OnActionCardPulled(Character targetCharacter, ActionCard card)
 	{
 		
 	}
