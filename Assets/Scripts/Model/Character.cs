@@ -174,7 +174,7 @@ namespace Model {
 		public int[] currentParameters = new int[parametersLength];
 		
 		public List<ActionCard> actionDeck = new List<ActionCard>();
-		public List<ResultCardData> actionResultDeck = new List<ResultCardData>();
+		public List<ResultCard> resultDeck = new List<ResultCard>();
 		
 		public Position position = new Position();
 		public ATBGauge atbGauge = new ATBGauge();
@@ -183,11 +183,11 @@ namespace Model {
 		
 		public Action<Character> atbGaugeFullEvent;
 		public Action<Character, ActionCard> actionCardPulledEvent;
-		public Action<Character, ResultCardData> actionResultCardPulledEvent;
+		public Action<Character, ResultCard> resultCardPulledEvent;
 		public Action<Character, Character> targetSelectedEvent;
 		
 		public ActionCard pendingActionCard;
-		public ResultCardData pendingResultCard;
+		public ResultCard pendingResultCard;
 		public Character selectedTarget;
 		
 		
@@ -222,8 +222,10 @@ namespace Model {
 				actionDeck.Add(card);
 			}
 			
-			foreach (ResultCardData card in staticData.possibleResultCards) {
-				actionResultDeck.Add(card);
+			foreach (ResultCardData cardData in staticData.possibleResultCards) {
+				ResultCard card = new ResultCard();
+				card.Init(cardData, this);
+				resultDeck.Add(card);
 			}
 			
 			atbGauge.Clear();
@@ -250,12 +252,18 @@ namespace Model {
 		}
 		
 		
-		public void PullResultCard()
+		public void PullRandomResultCard()
 		{
-			pendingResultCard = actionResultDeck[RandomController.GetRandom(0, actionResultDeck.Count)];
+			PullResultCard(resultDeck[RandomController.GetRandom(0, resultDeck.Count)]);
+		}
+		
+		
+		public void PullResultCard(ResultCard card)
+		{
+			pendingResultCard = resultDeck[RandomController.GetRandom(0, resultDeck.Count)];
 			
-			if (actionResultCardPulledEvent != null) {
-				actionResultCardPulledEvent(this, pendingResultCard);
+			if (resultCardPulledEvent != null) {
+				resultCardPulledEvent(this, pendingResultCard);
 			}
 		}
 		
@@ -276,16 +284,18 @@ namespace Model {
 				return;
 			}
 			
-			UnityEngine.Debug.Log("Confirming move");
+//			UnityEngine.Debug.Log("Confirming move");
+			
+			atbGauge.Clear();
 			
 			if (pendingActionCard.data.targetMode == TargetMode.Single) {
 				if (selectedTarget == null) {
 					return;
 				}
 				
-				if (pendingResultCard.type == ResultType.Miss) {
+				if (pendingResultCard.data.type == ResultType.Miss) {
 					return;
-				} else if (pendingResultCard.type == ResultType.OK) {
+				} else if (pendingResultCard.data.type == ResultType.OK) {
 					ApplyCardOnTarget(selectedTarget);
 				}
 			} else if (pendingActionCard.data.targetMode == TargetMode.Single) {

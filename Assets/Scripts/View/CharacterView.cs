@@ -13,7 +13,7 @@ public class CharacterView : MonoBehaviour
 		this.character = character;
 		
 		character.actionCardPulledEvent += OnActionCardPulled;
-		character.actionResultCardPulledEvent += OnResultCardPulled;
+		character.resultCardPulledEvent += OnResultCardPulled;
 		character.atbGaugeFullEvent += OnATBGaugeFull;
 		
 		transform.position = new Vector3(character.position.x, 0.0f, character.position.y);
@@ -37,7 +37,7 @@ public class CharacterView : MonoBehaviour
 	}
 	
 	
-	void OnResultCardPulled(Character targetCharacter, ResultCardData card)
+	void OnResultCardPulled(Character targetCharacter, ResultCard card)
 	{
 		
 	}

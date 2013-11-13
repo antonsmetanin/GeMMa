@@ -4,15 +4,14 @@ using System.Collections;
 
 namespace Model
 {
-	[System.Serializable]
-	public class ActionCard : Card
+	public class ResultCard : Card
 	{
-		public ActionCardData data;
+		public ResultCardData data;
 		
 		public Character owner;
 		
 		
-		public void Init(ActionCardData data, Character owner)
+		public void Init(ResultCardData data, Character owner)
 		{
 			this.data = data;
 			this.owner = owner;

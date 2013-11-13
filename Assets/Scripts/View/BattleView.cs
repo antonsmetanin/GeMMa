@@ -7,21 +7,33 @@ public class BattleView : MonoBehaviour
 {
 	public CharacterView characterViewSource;
 	public Battlefield battlefieldSource;
-	public ActionCardView cardSource;
+	public ActionCardView actionCardSource;
+	public ResultCardView resultCardSource;
 	public Transform cardsContainer;
 	
-	List<ActionCardView> cards = new List<ActionCardView>();
+	List<ActionCardView> actionCards = new List<ActionCardView>();
+	Pool<ActionCardView> actionCardsPool = new Pool<ActionCardView>();
+	
+	List<ResultCardView> resultCards = new List<ResultCardView>();
+	Pool<ResultCardView> resultCardsPool = new Pool<ResultCardView>();
+	
+	ActionCardView chosenActionCard;
+	ResultCardView chosenResultCard;
 	
 	Battle battle;
 	
 	
-	public void Init(Battle battle) {
+	public void Init(Battle battle)
+	{
 		this.battle = battle;
 		
 		Battlefield battlefield = GameObject.Instantiate(battlefieldSource) as Battlefield;
 		battlefield.transform.parent = transform;
 		battlefield.transform.localPosition = Vector3.zero;
 		battlefield.transform.localRotation = Quaternion.identity;
+		
+		actionCardsPool.Init(actionCardSource);
+		resultCardsPool.Init(resultCardSource);
 		
 		foreach (Character ally in battle.allies) {
 			CharacterView characterView = GameObject.Instantiate(characterViewSource) as CharacterView;
@@ -43,14 +55,17 @@ public class BattleView : MonoBehaviour
 			float x = (float)(Screen.width / 2) - (cardWidth * (float)character.actionDeck.Count) * 0.5f;
 			
 			foreach (ActionCard actionCard in character.actionDeck) {
-				ActionCardView actionCardView = GameObject.Instantiate(cardSource) as ActionCardView;
+				ActionCardView actionCardView = actionCardsPool.Get();
 				actionCardView.Init(actionCard);
 				actionCardView.transform.parent = cardsContainer;
 				actionCardView.transform.localPosition = new Vector3(x, 50.0f, 0.0f);
+				actionCardView.transform.localRotation = Quaternion.identity;
+				
+				actionCardView.Reset();
 				
 				actionCardView.openEvent += OnActionCardOpen;
 				actionCardView.centeredEvent += OnActionCardCentered;
-				cards.Add(actionCardView);
+				actionCards.Add(actionCardView);
 				
 				x += cardWidth;
 			}
@@ -58,20 +73,100 @@ public class BattleView : MonoBehaviour
 	}
 	
 	
-	void OnActionCardOpen(ActionCardView actionCard)
+	void OnActionCardOpen(CardView openCard)
 	{
-		foreach (ActionCardView card in cards) {
+		ActionCardView actionCard = openCard as ActionCardView;
+		
+		foreach (ActionCardView card in actionCards) {
 			card.clickable = false;
+			card.actionCard.owner.PullActionCard(actionCard.actionCard);
 		}
 		
 		actionCard.MoveToTheCenter();
 	}
 	
 	
-	void OnActionCardCentered(ActionCardView actionCard)
+	void OnActionCardCentered(CardView centeredCard)
 	{
-		actionCard.actionCard.owner.PullResultCard();
-		actionCard.actionCard.owner.SelectTarget(battle.enemies[0]);
-		actionCard.actionCard.owner.ConfirmMove();
+		chosenActionCard = centeredCard as ActionCardView;
+		
+		while (actionCards.Count > 0) {
+			ActionCardView card = actionCards[actionCards.Count - 1];
+			
+			if (card != chosenActionCard) {
+				card.openEvent -= OnActionCardOpen;
+				card.centeredEvent -= OnActionCardCentered;
+				card.gameObject.SetActive(false);
+			}
+			
+			actionCards.RemoveAt(actionCards.Count - 1);
+		}
+		
+		Character character = chosenActionCard.actionCard.owner;
+		
+		float cardWidth = 250.0f;
+		float x = (float)(Screen.width / 2) - (cardWidth * (float)character.resultDeck.Count) * 0.5f;
+		
+		foreach (ResultCard resultCard in character.resultDeck) {
+			ResultCardView resultCardView = resultCardsPool.Get();
+			resultCardView.Init(resultCard);
+			resultCardView.transform.parent = cardsContainer;
+			resultCardView.transform.localPosition = new Vector3(x, 50.0f, 0.0f);
+			resultCardView.transform.localRotation = Quaternion.identity;
+			
+			resultCardView.Reset();
+			
+			resultCardView.openEvent += OnResultCardOpen;
+			resultCardView.centeredEvent += OnResultCardCentered;
+			resultCards.Add(resultCardView);
+			
+			x += cardWidth;
+		}
+	}
+	
+	
+	void OnResultCardOpen(CardView openCard)
+	{
+		ResultCardView resultCard = openCard as ResultCardView;
+		
+		foreach (ResultCardView card in resultCards) {
+			card.clickable = false;
+			
+			card.resultCard.owner.PullResultCard(resultCard.resultCard);
+		}
+		
+		resultCard.MoveToTheCenter();
+	}
+	
+	
+	void OnResultCardCentered(CardView centeredCard)
+	{
+		chosenResultCard = centeredCard as ResultCardView;
+		
+		Character character = chosenResultCard.resultCard.owner;
+		
+		character.PullResultCard(chosenResultCard.resultCard);
+		character.SelectTarget(battle.enemies[0]);
+		character.ConfirmMove();
+		
+		while (resultCards.Count > 0) {
+			ResultCardView card = resultCards[resultCards.Count - 1];
+			
+			if (card != chosenResultCard) {
+				card.openEvent -= OnResultCardOpen;
+				card.centeredEvent -= OnResultCardCentered;
+				card.gameObject.SetActive(false);
+			}
+			
+			resultCards.RemoveAt(resultCards.Count - 1);
+		}
+		
+		chosenActionCard.openEvent -= OnActionCardOpen;
+		chosenActionCard.centeredEvent -= OnActionCardCentered;
+		chosenActionCard.gameObject.SetActive(false);
+		
+		chosenResultCard.openEvent -= OnResultCardOpen;
+		chosenResultCard.centeredEvent -= OnResultCardCentered;
+		chosenResultCard.gameObject.SetActive(false);
 	}
 }
