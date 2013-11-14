@@ -34,7 +34,7 @@ public class MouseController : MonoBehaviour
 //				
 //				hitObject.transform.position = hitObject.transform.position + direction * speed;
 				
-				ActionCardView card = hitObject.GetComponent<ActionCardView>();
+				CardView card = hitObject.GetComponent<CardView>();
 				
 				card.Rotate();
 			}
