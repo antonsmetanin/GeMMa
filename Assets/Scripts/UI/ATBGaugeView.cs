@@ -5,26 +5,31 @@ using Model;
 
 public class ATBGaugeView : MonoBehaviour
 {
-	public UISlider slider;
+	public UISprite allyPointer;
+	public UISprite enemyPointer;
+	public Transform atbRuler;
 	public CharacterView characterView;
 	public ATBGauge gauge;
 	
 	
-	public void Init(CharacterView characterView)
+	public void Init(CharacterView characterView, Transform atbRuler)
 	{
+		transform.localScale = Vector3.one;
 		this.characterView = characterView;
 		gauge = characterView.character.atbGauge;
+		this.atbRuler = atbRuler;
 	}
 	
 	
 	void Update()
 	{
 		if (characterView != null) {
-			Vector3 pos = Camera.main.WorldToScreenPoint(characterView.transform.position + Vector3.up * 2.0f);
-			pos.z = 0.0f;
-			transform.localPosition = pos;
+			bool isAlly = true;
 			
-			slider.sliderValue = gauge.ATBValue;
+			allyPointer.gameObject.SetActive(isAlly);
+			enemyPointer.gameObject.SetActive(!isAlly);
+			
+			transform.localPosition = new Vector3((gauge.ATBValue - 0.5f) * atbRuler.localScale.x, -40.0f, 0.0f);
 		}
 	}
 }

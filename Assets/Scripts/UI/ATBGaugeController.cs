@@ -7,6 +7,8 @@ public class ATBGaugeController : MonoBehaviour
 {
 	public ATBGaugeView atbGaugeSource;
 	public ParametersView parametersViewSource;
+	public Transform atbRuler;
+	public Transform atbContainer;
 	
 	
 	void Start()
@@ -18,9 +20,8 @@ public class ATBGaugeController : MonoBehaviour
 	void OnCharacterViewCreated(CharacterView characterView)
 	{
 		ATBGaugeView atbGaugeView = GameObject.Instantiate(atbGaugeSource) as ATBGaugeView;
-		atbGaugeView.transform.parent = transform;
-		atbGaugeView.transform.localScale = Vector3.one;
-		atbGaugeView.Init(characterView);
+		atbGaugeView.transform.parent = atbContainer;
+		atbGaugeView.Init(characterView, atbRuler);
 		
 		ParametersView parametersView = GameObject.Instantiate(parametersViewSource) as ParametersView;
 		parametersView.transform.parent = transform;

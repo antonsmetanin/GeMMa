@@ -131,7 +131,11 @@ namespace Model {
 	{
 		public float ATBValue {
 			get {
-				return (float)(TimeController.CurrentTime - startTime) / (float)(endTime - startTime);
+				if (full) {
+					return 1.0f;
+				} else {
+					return (float)(TimeController.CurrentTime - startTime) / (float)(endTime - startTime);
+				}
 			}
 		}
 		
