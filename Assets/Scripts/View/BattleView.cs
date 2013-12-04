@@ -50,7 +50,7 @@ public class BattleView : MonoBehaviour
 	
 	void ATBGaugeFull(Character character)
 	{
-		if (battle.allies.Contains(character)) {
+		if (character.side == BattleSide.Left) {
 			float cardWidth = 250.0f;
 			float x = (float)(Screen.width / 2) - (cardWidth * (float)character.actionDeck.Count) * 0.5f;
 			

@@ -57,11 +57,24 @@ namespace Model {
 	}
 	
 	
+	public enum BattleSide
+	{
+		Left,
+		Right
+	}
+	
+	
 	[System.Serializable]
 	public struct Position
 	{
 		public int x;
 		public int y;
+		
+		public Position(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
 	}
 	
 	
@@ -180,7 +193,7 @@ namespace Model {
 		public List<ActionCard> actionDeck = new List<ActionCard>();
 		public List<ResultCard> resultDeck = new List<ResultCard>();
 		
-		public Position position = new Position();
+		public Position position;
 		public ATBGauge atbGauge = new ATBGauge();
 		
 		public bool dead;
@@ -193,6 +206,7 @@ namespace Model {
 		public ActionCard pendingActionCard;
 		public ResultCard pendingResultCard;
 		public Character selectedTarget;
+		public BattleSide side;
 		
 		
 		public void Init(CharacterData staticData)
@@ -216,8 +230,11 @@ namespace Model {
 		}
 		
 		
-		public void SetupNewBattle()
+		public void SetupNewBattle(BattleSide side, Position position)
 		{
+			this.side = side;
+			this.position = position;
+			
 			actionDeck.Clear();
 			
 			foreach (ActionCardData cardData in staticData.possibleActionCards) {

@@ -24,7 +24,7 @@ public class ATBGaugeView : MonoBehaviour
 	void Update()
 	{
 		if (characterView != null) {
-			bool isAlly = true;
+			bool isAlly = characterView.character.side == BattleSide.Left;
 			
 			allyPointer.gameObject.SetActive(isAlly);
 			enemyPointer.gameObject.SetActive(!isAlly);

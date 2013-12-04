@@ -27,15 +27,12 @@ namespace Model
 			this.enemies = enemies;
 			
 			for (int i = 0; i < allies.Count; ++i) {
-				allies[i].position.x = -5;
-				allies[i].SetupNewBattle();
+				allies[i].SetupNewBattle(BattleSide.Left, new Position(-5, 0));
 				allies[i].atbGaugeFullEvent += OnATBGAugeFull;
-				
 			}
 			
 			for (int i = 0; i < enemies.Count; ++i) {
-				enemies[i].position.x = 5;
-				enemies[i].SetupNewBattle();
+				enemies[i].SetupNewBattle(BattleSide.Right, new Position(5, 0));
 			}
 			
 			if (battleStartedEvent != null) {
