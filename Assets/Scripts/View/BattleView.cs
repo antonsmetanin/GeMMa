@@ -51,23 +51,34 @@ public class BattleView : MonoBehaviour
 	void ATBGaugeFull(Character character)
 	{
 		if (character.side == BattleSide.Left) {
-			float cardWidth = 250.0f;
-			float x = (float)(Screen.width / 2) - (cardWidth * (float)character.actionDeck.Count) * 0.5f;
+//			float cardWidth = 10.0f;
+			float cardWidth = 56f / (float)(character.actionDeck.Count - 1);
+//			float x = (float)(Screen.width / 2) - (cardWidth * (float)character.actionDeck.Count) * 0.5f;
+//			float x = -(cardWidth * (float)(character.actionDeck.Count - 1)) * 0.5f;
+			float x = 28f;
 			
 			foreach (ActionCard actionCard in character.actionDeck) {
 				ActionCardView actionCardView = actionCardsPool.Get();
+
+				var pivot = new GameObject("Pivot");
+				pivot.transform.parent = cardsContainer;
+				pivot.transform.localPosition = new Vector3(0, -360f, 0);
+				pivot.transform.localScale = Vector3.one;
+				pivot.transform.localEulerAngles = new Vector3(0, 0, x);
+
 				actionCardView.Init(actionCard);
-				actionCardView.transform.parent = cardsContainer;
-				actionCardView.transform.localPosition = new Vector3(x, 50.0f, 0.0f);
+				actionCardView.transform.parent = pivot.transform;
+				actionCardView.transform.localPosition = new Vector3(0, 500.0f, 0.0f);
 				actionCardView.transform.localRotation = Quaternion.identity;
-				
+				actionCardView.transform.localScale = Vector3.one * 300f;
+
 				actionCardView.Reset();
 				
 				actionCardView.openEvent += OnActionCardOpen;
 				actionCardView.centeredEvent += OnActionCardCentered;
 				actionCards.Add(actionCardView);
 				
-				x += cardWidth;
+				x -= cardWidth;
 			}
 		}
 	}
@@ -104,15 +115,25 @@ public class BattleView : MonoBehaviour
 		
 		Character character = chosenActionCard.actionCard.owner;
 		
-		float cardWidth = 250.0f;
-		float x = (float)(Screen.width / 2) - (cardWidth * (float)character.resultDeck.Count) * 0.5f;
+//		float cardWidth = 250.0f;
+//		float x = (float)(Screen.width / 2) - (cardWidth * (float)character.resultDeck.Count) * 0.5f;
+
+		float cardWidth = 56f / (float)(character.resultDeck.Count - 1);
+		float x = 28f;
 		
 		foreach (ResultCard resultCard in character.resultDeck) {
+			var pivot = new GameObject("Pivot");
+			pivot.transform.parent = cardsContainer;
+			pivot.transform.localPosition = new Vector3(0, -360f, 0);
+			pivot.transform.localScale = Vector3.one;
+			pivot.transform.localEulerAngles = new Vector3(0, 0, x);
+
 			ResultCardView resultCardView = resultCardsPool.Get();
 			resultCardView.Init(resultCard);
-			resultCardView.transform.parent = cardsContainer;
-			resultCardView.transform.localPosition = new Vector3(x, 50.0f, 0.0f);
+			resultCardView.transform.parent = pivot.transform;
+			resultCardView.transform.localPosition = new Vector3(0, 500.0f, 0.0f);
 			resultCardView.transform.localRotation = Quaternion.identity;
+			resultCardView.transform.localScale = Vector3.one * 300f;
 			
 			resultCardView.Reset();
 			
@@ -120,7 +141,7 @@ public class BattleView : MonoBehaviour
 			resultCardView.centeredEvent += OnResultCardCentered;
 			resultCards.Add(resultCardView);
 			
-			x += cardWidth;
+			x -= cardWidth;
 		}
 	}
 	

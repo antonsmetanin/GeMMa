@@ -12,6 +12,8 @@ public class ActionCardView : CardView
 	public Texture2D icon;
 	
 	public Renderer iconRenderer;
+
+	public UILabel label;
 	
 //	void DrawTextures(Rect[] rects)
 //	{
@@ -22,8 +24,9 @@ public class ActionCardView : CardView
 	public void Init(ActionCard actionCard)
 	{
 		this.actionCard = actionCard;
-		
+
 		SetupIcon();
+		label.text = actionCard.data.cardName;
 	}
 	
 	

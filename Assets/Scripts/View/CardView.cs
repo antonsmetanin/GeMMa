@@ -18,6 +18,9 @@ public class CardView : MonoBehaviour
 	
 	float startAngle;
 	float endAngle;
+
+	float startScale;
+	float endScale;
 	
 	bool opening = false;
 	bool open = false;
@@ -25,6 +28,7 @@ public class CardView : MonoBehaviour
 	public bool clickable = true;
 	
 	Vector3 startPosition;
+	Vector3 endPosition;
 	
 	
 	public void Reset()
@@ -57,8 +61,14 @@ public class CardView : MonoBehaviour
 		
 		actionStartTime = TimeController.CurrentTime;
 		actionEndTime = actionStartTime + rotationTime * 3;
+
+		transform.parent = transform.parent.parent;
 		
 		startPosition = transform.localPosition;
+//		endPosition = new Vector3((float)(Screen.width / 2), (float)(Screen.height / 2), 0.0f);
+		endPosition = new Vector3(this is ActionCardView ? -400f : 400f, (float)(Screen.height / 2), 0);
+		startScale = transform.localScale.x;
+		endScale = 800f;
 	}
 	
 	
@@ -85,7 +95,8 @@ public class CardView : MonoBehaviour
 			if (currentTime < actionEndTime) {
 				float t = (float)(currentTime - actionStartTime) / (float)(actionEndTime - actionStartTime);
 				
-				transform.localPosition = startPosition * (1.0f - t) + new Vector3((float)(Screen.width / 2), (float)(Screen.height / 2), 0.0f) * t;
+				transform.localPosition = startPosition * (1.0f - t) + endPosition * t;
+				transform.localScale = Vector3.one * (startScale * (1f - t) + endScale * t);
 			} else {
 				moving = false;
 				
@@ -95,6 +106,6 @@ public class CardView : MonoBehaviour
 			}
 		}
 		
-		transform.rotation = Quaternion.Euler(0.0f, currentAngle, 0.0f);
+		transform.localEulerAngles = new Vector3(0, currentAngle, 0);
 	}
 }
